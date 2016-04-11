@@ -1,8 +1,35 @@
 #Ejemplos
 #Ctrl + Enter, para ejecutar todas las líneas seleccionadas
-#Ctrl + L, para limpar consola 
+#Ctrl + L, para limpar consola
 #Asigna valor
 x <- 1
+#cargar librería
+library("ggplot2")
+require('')
+#cargar datos contenidos en un paquete
+data(package='ggplot2')
+#ayuda
+help("require")
+#Importar un archivo dentro del directorio de trabajo
+archivo <- read.csv("~/archivo.csv")
+View(archivo)
+#muestra los primeros seis renglones de un archivo cargado
+head(archivo)
+#muestra estadísticos básicos
+summary(archivo)
+#filtrado
+filtrado <- subset(archivo, State == "Committed", select = c(Assigned.To, ID))
+filtrado <- subset(archivo, State == "Committed")$ID
+#suma
+sum(x)
+#promedio
+mean(x)
+#muestra el número de registros y variables
+dim(archivo)
+#gráfica
+g <- ggplot(movies, aes(x = year, y = budget))
+#pegar un renglón
+paste(c('hello',5,7.6),collapse = ' ')
 #Se valida el tipo
 is.numeric(x)
 #Se cambia de tipo
@@ -44,9 +71,6 @@ repeat {
 c(1, 5) + c(2, 4)
 #Evaluar texto
 eval(parse(text = "c(1, 5) + c(2, 4)"))
-#Importar un archivo dentro del directorio de trabajo
-archivo <- read.csv("~/archivo.csv")
-View(archivo)
 #Crear una matriz a partir de dos vectores
 v1 <- c(1,5,28)
 v2 <- c(2,7,46)
@@ -102,3 +126,57 @@ df$D <- c('D1','D2','D3','D4')
 df$C <- NULL
 #Combinar data frames
 rbind(df1,df2)
+#Factor creado con un orden definido
+x <- factor(c("yes","yes","no","yes","no"),levels = c("yes", "no"))
+table(x)
+unclass(x)
+#probar que los objetos no tienen datos perdidos
+is.na(x)
+is.nan(x)
+#crear un data frame
+x <- data.frame(f = 1:4, bar = c(T,T,F,F))
+#número de filas
+nrow(x)
+#número de columnas
+ncol(x)
+#nombre de un objeto
+x <- 1:3
+names(x)
+names(x) <- c("uno","dos","tres")
+#nombres en listas
+x <- list(a=1,b=2,c=3)
+#nombres en matrices
+m <- matrix(1:4,nrow = 2,ncol = 2)
+dimnames(m) <- list(c("a","b"),c("c","d"))
+#leer datos tabulares
+read.table("tabla.txt")
+read.csv(x)
+#leer líneas de un archivo de texto
+readLines(x)
+#leer archivos de código de R
+source()
+dget()
+#cargar un workspace
+load()
+#leer objetos binarios simples de R en forma binaria
+unserialize()
+#escribir datos a un archivo
+write.table()
+writeLines()
+dump()
+dput()
+save()
+serialize()
+#estructura de datos (metadatos) a un archivo
+y <- data.frame(a=1,b="a")
+dput(y)
+dput(y, file = "y.R")
+#leer desde una archivo creado por dput
+new.y <- dget("y.R")
+new.y
+#se guardan varios objetos en un archivo
+x <- "foo"
+y <- data.frame(a=1,b="a")
+dump(c("x","y"),file = "data.R")
+rm(x,y)
+source("data.R")
