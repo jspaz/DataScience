@@ -1,2 +1,3 @@
 #Archivos ignorados por git
 *.Rhistory
+*.Rapp.history
