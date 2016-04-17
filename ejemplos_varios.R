@@ -1,58 +1,58 @@
-#Ejemplos
-#Ctrl + Enter, para ejecutar todas las líneas seleccionadas
-#Ctrl + L, para limpar consola
-#Asigna valor
+# Ejemplos
+# Ctrl + Enter, para ejecutar todas las líneas seleccionadas
+# Ctrl + L, para limpar consola
+# Asigna valor
 x <- 1
-#cargar librería
+# Cargar librería
 library("ggplot2")
 require('')
-#cargar datos contenidos en un paquete
+# Cargar datos contenidos en un paquete
 data(package = 'ggplot2')
-#ayuda
+# Ayuda
 help("require")
-#Importar un archivo dentro del directorio de trabajo
-archivo <- read.csv("~/archivo.csv")
-View(archivo)
-#muestra los primeros seis renglones de un archivo cargado
-head(archivo)
-#muestra estadísticos básicos
-summary(archivo)
-#filtrado
+# Importar un archivo dentro del directorio de trabajo
+archivo.csv <- read.csv("~/archivo.csv")
+View(archivo.csv)
+# Muestra los primeros seis renglones de un archivo cargado
+head(archivo.csv)
+# Muestra estadísticos básicos
+summary(archivo.csv)
+# Filtrado
 filtrado <- subset(archivo, State == "Committed", select = c(Assigned.To, ID))
 filtrado <- subset(archivo, State == "Committed")$ID
-#suma
+# Suma
 sum(x)
-#promedio
+# Promedio
 mean(x)
-#muestra el número de registros y variables
+# Muestra el número de registros y variables
 dim(archivo)
-#gráfica
+# Gráfica
 g <- ggplot(movies, aes(x = year, y = budget))
-#pegar un renglón
+# Pegar un renglón
 paste(c('hello', 5, 7.6), collapse = ' ')
-#Se valida el tipo
+# Se valida el tipo
 is.numeric(x)
-#Se cambia de tipo
+# Se cambia de tipo
 y <- as.logical(x)
-#Se valida el tipo
+# Se valida el tipo
 is.logical(y)
-#IF, ejemplo 1
+# IF, ejemplo 1
 if (8 == 9) {
   print('it is true')
 } else {
   print('it is false')
 }
-#IF, ejemplo 2
+# IF, ejemplo 2
 print(paste('it is', ifelse(T, 'true', 'false')))
-#FOR
+# FOR
 for (i in 0:5) print(i)
-#WHILE
+# WHILE
 i=0
 while(i < 5) {
   i = i + 1
   print(i)
 }
-#NEXT
+# NEXT
 i = 0
 while(i < 5) {
   i = i + 1
@@ -60,43 +60,43 @@ while(i < 5) {
     next
   print(i)
 }
-#REPEAT / BREAK
+# REPEAT / BREAK
 i = 1
 repeat {
   print(i)
   if (i > 4) break
   i = i + 1
 }
-#Sumar dos vectores
+# Sumar dos vectores
 c(1, 5) + c(2, 4)
-#Evaluar texto
+# Evaluar texto
 eval(parse(text = "c(1, 5) + c(2, 4)"))
-#Crear una matriz a partir de dos vectores
+# Crear una matriz a partir de dos vectores
 v1 <- c(1, 5, 28)
 v2 <- c(2, 7, 46)
 m1 <- rbind(v1, v2)
-#Crear una matriz a partir de las columnas
+# Crear una matriz a partir de las columnas
 m2 <- cbind(v1, v2)
-#Crear un archivo que guarde la matriz
+# Crear un archivo que guarde la matriz
 write.table(m1, 'out.csv',
             sep = ",",
             quote = FALSE,
             col.names = FALSE,
             row.names = FALSE)
-#Importar archivo
+# Importar archivo
 m3 <- read.csv('out.csv', header = FALSE)
-#Se consulta el tipo
+# Se consulta el tipo
 class(m3)
-#Se cambia el tipo a matriz
+# Se cambia el tipo a matriz
 m3 <- as.matrix(m3)
-#Se consulta el tipo
+# Se consulta el tipo
 class(m3)
-#Se intercambian las filas por las columnas en la matriz
+# Se intercambian las filas por las columnas en la matriz
 m4 <- t(m3)
 View(m4)
-#Se eliminan los nombres de las filas de la matriz
+# Se eliminan los nombres de las filas de la matriz
 row.names(m4) <- NULL
-#Crear un data frame
+# Crear un data frame
 df <- as.data.frame(rbind(
   c('A1','B1','C1'),
   c('A2','B2','C2'),
@@ -105,62 +105,62 @@ df <- as.data.frame(rbind(
 ), stringsAsFactors = FALSE)
 rownames(df) <- c(1, 2, 3, 4)
 colnames(df) <- c('A', 'B', 'C')
-#Consultar un elemento(s) específico(s)
+# Consultar un elemento(s) específico(s)
 df[1, 2]
 df[1, ]
 df[c(2, 4), ]
 df$B
 df["B"]
-#Regresa la consulta como tipo caracter
+# Regresa la consulta como tipo caracter
 df[["A"]]
 class(df[["A"]])
-#Regresa todos los valores de la posición de la columna
+# Regresa todos los valores de la posición de la columna
 df[2]
-#Regresa todos los valores de las columnas excepto la que se indica
+# Regresa todos los valores de las columnas excepto la que se indica
 df[-2]
-#Asignar un nuevo valor
+# Asignar un nuevo valor
 df[1,1] <- 'nuevo'
-#Agregar nueva columna
+# Agregar nueva columna
 df$D <- c('D1', 'D2', 'D3', 'D4')
-#Eliminar una columna
+# Eliminar una columna
 df$C <- NULL
-#Combinar data frames
+# Combinar data frames
 rbind(df1, df2)
-#Factor creado con un orden definido
+# Factor creado con un orden definido
 x <- factor(c("yes", "yes", "no", "yes", "no"), levels = c("yes", "no"))
 table(x)
 unclass(x)
-#probar que los objetos no tienen datos perdidos
+# Probar que los objetos no tienen datos perdidos
 is.na(x)
 is.nan(x)
-#crear un data frame
+# crear un data frame
 x <- data.frame(f = 1:4, bar = c(T, T, F, F))
-#número de filas
+# Número de filas
 nrow(x)
-#número de columnas
+# Número de columnas
 ncol(x)
-#nombre de un objeto
+# Nombre de un objeto
 x <- 1:3
 names(x)
 names(x) <- c("uno", "dos", "tres")
-#nombres en listas
+# Nombres en listas
 x <- list(a = 1, b = 2, c = 3)
-#nombres en matrices
+# Nombres en matrices
 m <- matrix(1:4, nrow = 2, ncol = 2)
 dimnames(m) <- list(c("a", "b"), c("c", "d"))
-#leer datos tabulares
+# Leer datos tabulares
 read.table("tabla.txt")
 read.csv(x)
-#leer líneas de un archivo de texto
+# Leer líneas de un archivo de texto
 readLines(x)
-#leer archivos de código de R
+# Leer archivos de código de R
 source()
 dget()
-#cargar un workspace
+# Cargar un workspace
 load()
-#leer objetos binarios simples de R en forma binaria
+# Leer objetos binarios simples de R en forma binaria
 unserialize()
-#escribir datos a un archivo
+# Escribir datos a un archivo
 write.table()
 writeLines()
 dump()
@@ -168,14 +168,14 @@ dput()
 dget()
 save()
 serialize()
-#estructura de datos (metadatos) a un archivo
+# Estructura de datos (metadatos) a un archivo
 y <- data.frame(a = 1, b = "a")
 dput(y)
 dput(y, file = "y.R")
-#leer desde una archivo creado por dput
+# Leer desde una archivo creado por dput
 new.y <- dget("y.R")
 new.y
-#se guardan varios objetos en un archivo
+# se guardan varios objetos en un archivo
 x <- "foo"
 y <- data.frame(a = 1, b = "a")
 dump(c("x", "y"),file = "data.R")
