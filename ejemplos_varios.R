@@ -181,3 +181,35 @@ y <- data.frame(a = 1, b = "a")
 dump(c("x", "y"),file = "data.R")
 rm(x, y)
 source("data.R")
+# Sumar sólo los elementos de una columna de un data frame
+sum(flags$orange)
+# Crear un data frame que contenga los valores de columnas específicas
+flag_colors <- flags[, 11:17]
+# range(), regresa el mínimo y el máximo para un vector numérico
+range(x)
+# unique(), regresa un vector eliminando los elementos duplicados
+unique(x)
+# length() obtiene la longitud de un vector
+length(x)
+# table(), genera una tabla en la que se contabilida el número de 
+# ocurrencias
+table(flags$landmass)
+# lapply(), toma una lista como entrada y aplica una función a cada 
+# elemento de la lista para regresar una lista de la misma longitud
+# que la original
+lista <- lapply(flags, class)
+# sapply(), simplifica la función de lapply pero en forma de vector y 
+# cuando el resultado de la lista en el que cada elemento es un vector 
+# mayor a uno regresa una matriz o una lista
+matriz <- sapply(shape_mat, range)
+# crear una función temporal para obtener una lista con el segundo item del
+# segundo elemento de la lista
+lapply(unique_vals, function(elem) elem[2])
+# vapply(), permite especificar el formato de resultado que espera y en caso 
+# de que no se obtenga mandará un error y es correcto muestra un resultado
+# igual a sapply() y es más rápido con muchos datos
+vapply(flags, unique, numeric(1))
+# tapply(), permite aplicar una función de cada uno de los elementos seleccionados,
+# como la proporción de ocurrencia del primer elemento agrupado por el segundo
+tapply(flags$animate, flags$landmass, mean)
+tapply(flags$population, flags$red, summary)
