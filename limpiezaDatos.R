@@ -24,7 +24,7 @@ head(cameraData)
 library(xlsx)
 cameraData <- read.xlsx("./data/cameras.xlsx", sheetIndex=1, header=TRUE)
 head(cameraData)
-# Leer columnas y filas especÃ­ficas
+# Leer columnas y filas específicas
 colIndex <- 2:3
 rowIndex <- 1:4
 dataCameraSubset <- read.xlsx("./data/cameras.xlsx", sheetIndex=1, colIndex=colIndex, rowIndex=rowIndex)
