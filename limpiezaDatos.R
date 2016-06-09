@@ -59,13 +59,14 @@ names(jsonData)
 # Obtener el valor especÃ­fico de una variable, el data frame de otro data frame
 names(jsonData$owner)
 jsonData$owner$login
-# Escribir un data frame a un JSON con identaciÃ³n
+# Escribir un data frame a un JSON con identación
 myjson <- toJSON(iris, pretty = TRUE)
 cat(myjson)
 # Regresar un JSON a un data frame
 iris2 <- fromJSON(myjson)
 iris2
-# Data table, son mÃ¡s eficientes que los data frames
+# Data table, son más eficientes que los data frames
+library(data.table)
 DF <- data.frame(x = rnorm(9), y = rep(c("a", "b", "c"), each = 3), z = rnorm(9))
 head(DF, 3)
 DT <- data.table(x = rnorm(9), y = rep(c("a", "b", "c"), each = 3), z = rnorm(9))
@@ -73,9 +74,30 @@ head(DT, 3)
 # Ver todas las tablas en memoria
 tables()
 # Subconjuntos
-DT[4,]
-DT[DT$y=="b",]
-DT[c(2, 3)]
-DT[,c(2,3)]
-
-
+DT[4,]          # Muestra la cuarta fila
+DT[DT$y=="b",]  # Muestra sólo las filas con el valor b de la columna y
+DT[c(4, 7)]     # Muestra la fila 4 y la fila 7
+DT[,c(2, 3)]    # No muestra los valores de la columnas
+# Una expresión es una colección de sentencias dentro de corchetes
+{ 
+x = 1 
+y = 2
+}
+k = {print(10);5}
+print(k)
+# Cálculo de variables con expresiones
+DT[, list(mean(x), sum(z))]
+DT[,table(y)]
+# Agregar nuevas columnas
+DT[, w:=z^2]    # Se agrega la columna W con el resultado de la operación en cada fila
+DT2 <- DT       # Aunque se hace la asignación, la afectación a DT tambien afecta a DT2
+DT[, y:=2]      # Sustituye los valores en la columna existente Y
+# Múltiples operaciones
+DT[, m:= {tmp <- (x+z); log2(tmp+5)}]
+# Se puede asignar un valor a una nueva columna dependiendo se su evaluación
+DT[, a:= x>0]
+DT[,b:= mean(x+w), by=a]
+# Variables especiales .N es un entero longitud 1 y contiene el número 
+set.seed(123);
+DT <- data.table(x=sample(letters[1:3], 1E5, TRUE))
+DT[, .N , by=x]
