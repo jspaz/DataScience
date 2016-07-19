@@ -1,0 +1,28 @@
+# Ver la ruta actual
+pwd
+# Limpiar pantalla
+clear
+# Lista detallada de archivos visibles y ocultos
+ls -al
+# Camabiar de directorio anterior
+cd ..
+# Crear directorios
+mkdir nombreDirectorio
+# crear archivos vacios
+touch archivoVacio.txt
+# Copiar archivos
+cp archivoCopiado Directorio
+# Copiar todos los archivos de un directorio a otro directorio
+cp -r directorioOrigen directorioDestino
+# Eliminar archivo
+rm archivo
+# Eliminar archivos de un directorio
+rm -r Directorio
+# Mover archivo
+mv archivo directorioDestino
+# Cambiar el nombre de un archivo
+mv nombreOriginal nombreNuevo
+# Imprimir argumentos en pantalla
+echo argumento
+# Mostrar fecha
+date

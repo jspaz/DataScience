@@ -1,0 +1,7 @@
+# Configurar usuario y correo global
+git config --global user.name "nombre"
+git config --global user.email "correo"
+# Ver la configuración
+git config --list
+# Salir
+exit

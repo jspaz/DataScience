@@ -1,0 +1,16 @@
+# Agregar todos los archivos nuevos
+git add .
+# Actualizar el seguimiento de archivos que cambiaron de nombre o fueron eliminados
+git add -u
+# Actualiza todo
+git add -A
+# Enviar los cambios como un versión intermedia
+git commit -m "comentario"
+# Enviar los cambios al repositorio remoto
+git push
+# Crear una rama
+git checkout -b nombreRama
+# Ver la rama actual
+git branch
+# Cambiar de rama
+git checkout master

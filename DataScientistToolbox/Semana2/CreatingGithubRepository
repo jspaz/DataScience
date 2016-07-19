@@ -1,0 +1,6 @@
+# Iniciar una carpeta con Git
+git init
+# Hacer la referencia de la carpeta local con el repositorio GitHub
+git remote add origin https:/github.com/usuario/repositorio.git
+# Clonar un repositorio localmente
+git clone https://hithub.com/usuario/repositorio.git

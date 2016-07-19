@@ -1,0 +1,14 @@
+# Crear un encabezado secundario en un documento Markdown
+## Este es un encabezado secuendario
+
+# Crear un encabezado de tercer nivel
+### Este es un encabezado de tercer nivel
+
+# Crear una lista de elementos
+* uno
+* dos
+* tres
+
+# Referencias
+http://daringfireball.net/project/markdown
+http://www.rstudio.com/ide/docs/authoring/using_markdown
