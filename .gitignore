@@ -1,4 +1,5 @@
 #Archivos ignorados por git
 *.Rhistory
+*.RData
 *.Rapp.history
 .httr-oauth
