@@ -36,37 +36,11 @@ is.numeric(x)
 y <- as.logical(x)
 # Se valida el tipo
 is.logical(y)
-# IF, ejemplo 1
-if (8 == 9) {
-  print('it is true')
-} else {
-  print('it is false')
-}
-# IF, ejemplo 2
-print(paste('it is', ifelse(T, 'true', 'false')))
-# FOR
-for (i in 0:5) print(i)
-# WHILE
-i=0
-while(i < 5) {
-  i = i + 1
-  print(i)
-}
-# NEXT
-i = 0
-while(i < 5) {
-  i = i + 1
-  if (i == 3)
-    next
-  print(i)
-}
-# REPEAT / BREAK
-i = 1
-repeat {
-  print(i)
-  if (i > 4) break
-  i = i + 1
-}
+
+
+
+
+
 # Sumar dos vectores
 c(1, 5) + c(2, 4)
 # Evaluar texto
