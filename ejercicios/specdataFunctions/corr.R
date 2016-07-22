@@ -5,6 +5,7 @@ corr <- function(directory, threshold = 0) {
   ## completely observed observations (on all variables) required to compute
   ## the correlation between nitrate and sulfate; the default is 0
   ## Return a numeric vector of correlations
+  ## Execution: corr("ejercicios/data/specdata")
   df <- complete(directory)
   ids <- df[df["nobs"] > threshold, ]$id
   corrr <- numeric()

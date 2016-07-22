@@ -3,7 +3,7 @@ library(tm)
 library(wordcloud)
 
 # lee el documento UTF-8 y lo convierte a ASCII
-txt <- readLines("defectos.txt", encoding = "UTF-8")
+txt <- readLines("ejercicios/data/defectos.txt", encoding = "UTF-8")
 txt = iconv(txt, to = "ASCII//TRANSLIT")
 
 # construye un corpus

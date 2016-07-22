@@ -12,7 +12,7 @@ if (!file.exists("data")) {
 }
 # Descargar archivo de internet, el método "curl" es para mac en páginas https
 fileUrl <- "https://data.baltimorecity.gov/api/views/frj6-ikmm/rows.csv?accessType=DOWNLOAD"
-download.file(fileUrl, destfile = "./ejercicios/data/cameras.csv", method = "curl")
+download.file(fileUrl, destfile = "./ejercicios/data/cameras.csv", method = "auto")
 list.files("./ejercicios/data")
 dateDownloaded <- date()
 dateDownloaded

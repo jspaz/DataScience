@@ -6,14 +6,14 @@
 # El punto es usado para referirse a cualquier caracter: 9.11
 # | significa OR y puede combinar dos expresiones: flood|fire|earthquake|coldfire   ^[Gg]ood|[Bb]ad
 # () las subexpresiones contenidas en par√©ntesisis contienen las alternativas: ^([Gg]ood|[Bb]ad)
-# ? indica que la expresi√≥n es opcional: [Gg]eorge( [Ww]\.)? [Bb]ush
+# ? indica que la expresiÛn es opcional: [Gg]eorge( [Ww]\.)? [Bb]ush
 # \. indica que el punto sea considerado como ese caracter y no como metacaracter
-# * significa cualquier n√∫mero incluyendo ninguno: (.*)
+# * significa cualquier n˙mero incluyendo ninguno: (.*)
 # + significa por lo menos uno de los elementos: [0-9]+ (.*)[0-9]+
-# {and} permite especificar el n√∫mero m√≠nimo y m√°ximo de las expresiones coincidentes: [Bb]ush( +[^ ]+ +){1,5} debate
+# {and} permite especificar el n˙mero m·ximo y m·ximo de las expresiones coincidentes: [Bb]ush( +[^ ]+ +){1,5} debate
 # m,n significa por lo menos m pero no m√°s de n coincidencias: 
 # m significa exactamente m coincidencias
 # m, significa por lo menos m coincidencias
 # () permiten guardar valores de las expresiones evaluadas: +([a-zA-Z]+) +\1 +
 # * tambi√©n permite buscar la coincidencia de caracteres m√°s larga que satisfaga la expresi√≥n: ^S(.*)s
-# * se puede delimitar la extensi√≥n con ?: ^S(.*?)s$
+# * se puede delimitar la extensiÛn con ?: ^S(.*?)s$
