@@ -21,3 +21,18 @@ columnmean <- function(y, removeNA = TRUE){
     }
     means
 }
+# Crear una función
+ScaledGpa <- function (grades, honor.points) {
+    gpa <- (sum(grades) + honor.points) / length(grades)
+    return(gpa)
+}
+# Invocar función
+ScaledGpa(c(3, 4, 2, 3), 3)
+# Función que incorpora otra función, primero la define y luego la utiliza
+f <- function(x) {
+    g <- function(y) {
+        y + z
+    }
+    z <- 4
+    x + g(x)
+}

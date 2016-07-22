@@ -36,11 +36,6 @@ is.numeric(x)
 y <- as.logical(x)
 # Se valida el tipo
 is.logical(y)
-
-
-
-
-
 # Sumar dos vectores
 c(1, 5) + c(2, 4)
 # Evaluar texto
