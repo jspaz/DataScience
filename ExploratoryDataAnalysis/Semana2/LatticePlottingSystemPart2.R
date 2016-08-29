@@ -10,3 +10,8 @@ xyplot(y ~ x | f, panel = function(x, y, ...) {
   panel.xyplot(x, y, ...) # Primera llamada al panel de función
   panel.abline(h = median(y), lty = 2) # Se agrega una línea horizontal con la media
 })
+# Regresión lineal
+xyplot(y ~ x | f, panel = function(y, x, ...) {
+  panel.xyplot(x, y, ...)
+  panel.lmline(x, y, col = 2)
+})
