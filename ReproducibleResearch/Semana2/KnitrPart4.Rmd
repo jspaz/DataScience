@@ -17,7 +17,7 @@ rand <- rnorm(1)
 
 The current time is `r time`. My favorite random numberist `r rand`.
 
-LetÂ´s first simulate some data.
+Let´s first simulate some data.
 ```{r simulatedata,echo=TRUE}
 x <- rnorm(100); y <- x + rnorm(100, sd = 0.5)
 ```
@@ -39,19 +39,4 @@ Here is a table of regression coefficients.
 library(xtable)
 xt <- xtable(summary(fit))
 print(xt, type = "html")
-```
-
-```{r setoptions,echo=FALSE}
-opts_chunk$set(echo = FALSE, results = "hide")
-```
-
-First simulate data
-```{r simulatedata,echo=TRUE}
-x <- rnorm(100); y <- x + rnorm(100, sd = 0.5)
-```
-
-Here is a scatterplot of the data
-```{r scatterplot, fig.height=4}
-par(mar = c(5,4,1,1), las = 1)
-plot(x, y, main = "My simulated data")
 ```
