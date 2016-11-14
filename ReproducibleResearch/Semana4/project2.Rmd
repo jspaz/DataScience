@@ -1,0 +1,238 @@
+# Synopsis
+This project involves exploring the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database. This database tracks characteristics of major storms and weather events in the United States, including when and where they occur, as well as estimates of any fatalities, injuries, and property damage.
+
+# Introduction
+Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern.
+
+Questions:
+
+1. Across the United States, which types of weather events are most harmful with respect to population health?
+2. Across the United States, which types of weather events have the most severe economic consequences health?
+
+The analysis employs simple ranking approach to answer the questions stated above. It follows the following logical steps:
+
+1. Start with an initial data set of recorded weather events and subset the data to exclude dirty observations.
+2. Choose a set of variables that are indicative of population health (e.g. the number of injuries the event has caused) and another set of variables that are indicative of economic consequences (e.g. the amount of monetary damage the event has caused).
+3. Create a subset of data containing only valid observations for the set of variables indicative of population health and create another subset of data containing only valid observations for the set of variables indicative of economic consequences.
+4. For each subset, aggregate the values for the set of variables per event type (e.g. the total number of injuries caused by a particular type of event, or the total monetary damage caused by a particular type of event).
+5. For each subset, sort the data in a descending order based on the aggregated values (i.e. the event types with the most negative consequences will be at the top; the event types with the least negative consequences will be at the bottom).
+6. For each subset, select the first 10 observations (i.e. the 10 event types that have the most negative consequences for population health and the economy).
+
+The result is two rankings:
+
+* The 10 types of weather events that are most harmful with respect to population health across the United States.
+* The 10 types of weather events that have the most severe economic consequences across the United States.
+
+# Data
+The data set used in this analysis is provided by the [National Oceanic and Atmospheric Administration (NOAA)](http://www.noaa.gov/about-noaa.html). It can be downloaded directly [here](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2) (47Mb). The document entitled [NWS Directive 10-1605](http://www.nws.noaa.gov/directives/sym/pd01016005curr.pdf) published by NOAA accompanies this data set, and will be used as the authoritative source of information in this analysis.
+
+The NOAA data set covers observations from 1950 to 2011. However, according to [http://www.ncdc.noaa.gov/stormevents/details.jsp](http://www.ncdc.noaa.gov/stormevents/details.jsp), only events recorded after 1996 have been recorded as per the 48 event types specified in the NWS Directive 10-1605. For the purpose of this analysis only observations made after 1996 will be taken into consideration.
+
+Furthermore, only observations with an event type that is an *exact* match of one of the 48 events defined in NWS Directive 10-1605 will be taken into consideration, with one exception: event types that have a slash character in them (e.g. "Cold/Wind Chill") will also match observations that have an event type of the constituent terms (e.g. "Cold" and "Wind Chill").
+
+# Data processing
+## Loading the data
+R packages are loaded. It must be dowloaded previusly.
+
+```{r, message = FALSE}
+library(R.utils)
+library(knitr)
+library(plyr)
+library(ggplot2)
+```
+
+If the data set hasn't been downloaded, this chunk downloads it to the working directory.
+
+```{r}
+if (!file.exists("storm_data.csv")) {
+  
+  file_url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
+  file_name <- "storm_data.csv.bz2"
+  download.file(file_url, file_name, method = "curl")
+  
+  bunzip2(file_name)
+}
+```
+
+The data set is loaded into `original_storm_data`.
+
+```{r, cache = TRUE}
+original_storm_data <- read.csv('storm_data.csv')
+```
+
+`original_storm_data` has the following variables.
+
+```{r}
+names(original_storm_data)
+```
+
+This analysis takes the following variables into consideration:
+
+* `BGN_DATE`: a date variable, used to subset the data set for observations between 1996 and 2011.
+* `EVTYPE`: a variable indicating the event type of the particular observation, used to categorise per event type.
+* `FATALATIES`: a variable indicating the number of fatalities caused by the particular observation, used to determine event types with the most negative consequences on population health.
+* `INJURIES`: a variable indicating the number of injuries caused by the particular observation, used to determine event types with the most negative consequences on population health.
+* `PROPDMG`: a variable indicating the estimated monetary value of damage to property caused by the particular observation, used to determine event types with the most negative consequences on the economy, rounded to three significant digits, in United States dollars.
+* `PROPDMGEXP`: a variable indicating the multiplier for `PROPDMG`; can be "K" for 1,000, "M" for 1,000,000 or "B" for 1,000,000,000 as per NWS Directive 10-1605.
+* `CROPDMG`: a variable indicating the estimated monetary value of damage to agricultural property (crops) caused by the particular observation, used to determine event types with the most negative consequences on the economy, rounded to three significant digits, in United States dollars.
+* `CROPDMGEXP`: a variable indicating the multiplier for `CROPDMG`; can be "K" for 1,000, "M" for 1,000,000 or "B" for 1,000,000,000 as per NWS Directive 10-1605.
+
+## Cleaning the data
+The initial data set, `original_storm_data` is subset by the above variables, and results in `storm_data`.
+
+```{r, cache = TRUE}
+storm_data <- original_storm_data[, c("BGN_DATE", "EVTYPE", "FATALITIES", "INJURIES", "PROPDMG", "PROPDMGEXP", "CROPDMG", "CROPDMGEXP")]
+```
+
+`storm_data` is subset to include only events recorded after 1996 (as motivated above).
+
+```{r}
+storm_data$BGN_DATE <- as.Date(as.character(storm_data$BGN_DATE), "%m/%d/%Y %H:%M:%S")
+storm_data <- subset(storm_data, format(storm_data$BGN_DATE, "%Y") > 1996 )
+```
+
+`storm_data` is also subset to include only event types as defined by NWS Directive 10-1605. The `storm_events` list holds all the event types defined in NWS Directive 10-1605, plus event types that are constituent parts of an event type with a slash character (e.g "Cold/Wind Chill" also results in "Cold" and "Wind Chill").
+
+```{r, message = FALSE}
+storm_events <- c("Astronomical Low Tide", "Avalanche", "Blizzard", "Coastal Flood", "Cold/Wind Chill", "Cold", "Wind Chill", "Debris Flow", "Dense Fog", "Dense Smoke", "Drought", "Dust Devil", "Dust Storm", "Excessive Heat", "Extreme Cold/Wind Chill", "Extreme Cold", "Flash Flood", "Flood", "Freezing Fog", "Frost/Freeze", "Frost", "Freeze", "Funnel Cloud", "Hail", "Heat", "Heavy Rain", "Heavy Snow", "High Surf", "High Wind", "Hurricane/Typhoon", "Hurricane", "Typhoon", "Ice Storm", "Lakeshore Flood", "Lake-Effect Snow", "Lightning", "Marine Hail", "Marine High Wind", "Marine Strong Wind", "Marine Thunderstorm Wind", "Rip Current", "Seiche", "Sleet", "Storm Tide", "Strong Wind", "Thunderstorm Wind", "Tornado", "Tropical Depression", "Tropical Storm", "Tsunami", "Volcanic Ash", "Waterspout", "Wildfire", "Winter Storm", "Winter Weather")
+```
+
+The `EVTYPE` variable is first converted to upper case to ensure consistent matching, and then converted to a factor. `storm_data` is subset for all event types included in `storm_events`, also converted to upper case to ensure consistent matching. Finally the redundant factor levels are dropped from `EVTYPE`. 
+
+```{r, message = FALSE, results = 'hide'}
+storm_data$EVTYPE <- factor(toupper(storm_data$EVTYPE))
+storm_data <- subset(storm_data, (storm_data$EVTYPE %in% toupper(storm_events)))
+droplevels(storm_data$EVTYPE)
+```
+
+The resultant sub set is about `r format(nrow(storm_data) / nrow(original_storm_data) * 100, digits = 0)`% of the size of the original data set.
+
+```{r}
+nrow(storm_data)
+nrow(original_storm_data)
+```
+
+## Subsetting data with negative consequences for population health
+For observations of the `FATALATIES` and `INJURIES` variables to be valuable for determining negative consequences on population health, they have to be greater than 0. `storm_data` is thus subset to include only observations where `FATALATIES` and `INJURIES` are greater than 0. The resultant sub set is stored in `storm_data_for_harmfulness`.
+
+```{r}
+storm_data_for_harmfulness <- subset(storm_data, storm_data$FATALITIES > 0 | storm_data$INJURIES > 0 )
+```
+
+For analysing consequences on population health, only `EVTYPE`, `FATALATIES` and `INJURIES` will be considered.
+```{r}
+storm_data_for_harmfulness <- storm_data_for_harmfulness[,c("EVTYPE", "FATALITIES", "INJURIES")]
+```
+
+The resultant sub set is about `r format(nrow(storm_data_for_harmfulness) / nrow(original_storm_data) * 100, digits = 0)`% of the size of the original data set, which indicates that a large portion of the observations are not harmful to population health (or has incomplete data).
+
+```{r}
+nrow(storm_data_for_harmfulness)
+nrow(original_storm_data)
+```
+
+To approximate to *total* effect of the consequence of an observation on population health, `FATALATIES` and `INJURIES` are summed together in a `HARFULNESS` variable.
+
+```{r}
+storm_data_for_harmfulness$HARMFULNESS <- storm_data_for_harmfulness$FATALITIES + storm_data_for_harmfulness$INJURIES
+```
+
+`HARMFULLNESS` is then summed together per `EVTYPE` and stored in `storm_data_for_harmfulness_grouped_per_event_type`
+
+```{r}
+storm_data_for_harmfulness_grouped_per_event_type <- ddply(storm_data_for_harmfulness, .(EVTYPE), numcolwise(sum))
+head(storm_data_for_harmfulness_grouped_per_event_type)
+```
+
+## Subsetting data with negative consequences for the economy
+In order to determine the values of observations from the `PROPDMG` and `CROPDMG` variables, the multiplier (`PROPDMGEXP` and `CROPDMGEXP` respectively) needs to be known. `storm_data` is thus firstly subset to include only observations where `PROPDMGEXP` and `CROPDMGEXP` are not missing. The result is stored in `storm_data_for_economy`.
+
+```{r}
+storm_data_for_economy <- subset(storm_data, storm_data$PROPDMGEXP != "" & storm_data$CROPDMGEXP != "" )
+```
+
+Secondly, for observations of the `PROPDMG` and `CROPDMG` variables to be valuable for determining negative consequences on the economy, they have to be greater than 0. `storm_data_for_economy` is thus subset to include only observations where `PROPDMG` and `CROPDMG` are greater than 0.
+
+```{r}
+storm_data_for_economy <- subset(storm_data_for_economy, storm_data_for_economy$PROPDMG > 0 | storm_data_for_economy$CROPDMG > 0 )
+```
+
+For analysing consequences on the economy, only `EVTYPE`, `PROPDMG`, `PROPDMGEXP`, `CROPDMG` and `CROPDMGEXP` will be considered.
+
+```{r}
+storm_data_for_economy <- storm_data_for_economy[,c("EVTYPE", "PROPDMG", "PROPDMGEXP", "CROPDMG", "CROPDMGEXP")]
+```
+
+The resultant sub set is about `r format(nrow(storm_data_for_economy) / nrow(original_storm_data) * 100, digits = 0)`% of the size of the original data set, which indicates that a large portion of the observations do not have negative consequences to the economy (or has incomplete data).
+
+```{r}
+nrow(storm_data_for_economy)
+nrow(original_storm_data)
+```
+
+In order to work with full amounts in `PROPDMG` and `CROPDMG`, two new variables will be created (`PROPDMGFULL` and `CROPDMGFULL` respectively), which will be the result of multiplying `PROPDMG` with `PROPDMGEXP` and multiplying `CROPDMG` with `CROPDMGEXP` respectively.
+
+`PROPDMGEXP` and `CROPDMGEXP` are first converted to upper case to ensure consistent matching.
+
+```{r}
+storm_data_for_economy$PROPDMGEXP <- factor(toupper(storm_data_for_economy$PROPDMGEXP))
+storm_data_for_economy$CROPDMGEXP <- factor(toupper(storm_data_for_economy$CROPDMGEXP))
+```
+
+`PROPDMGFULL` and `CROPDMGFULL` are calculated based on the following rules:
+
+* If `PROPDMGEXP` or `CROPDMGEXP` is "K", the multiplier is 1,000 (e.g. 'PROPDMGFULL = PROPDMG * 1000`).
+* If `PROPDMGEXP` or `CROPDMGEXP` is "M", the multiplier is 1,000,000 (e.g. 'PROPDMGFULL = PROPDMG * 1000000`).
+* If `PROPDMGEXP` or `CROPDMGEXP` is "B", the multiplier is 1,000,000,000 (e.g. 'PROPDMGFULL = PROPDMG * 1000000000`).
+
+```{r}
+storm_data_for_economy$PROPDMGFULL <- ifelse(storm_data_for_economy$PROPDMGEXP == "K", storm_data_for_economy$PROPDMG * 1000, ifelse(storm_data_for_economy$PROPDMGEXP == "M",  storm_data_for_economy$PROPDMG * 1000000, ifelse(storm_data_for_economy$PROPDMGEXP == "B",  storm_data_for_economy$PROPDMG * 1000000000, 0)))
+
+storm_data_for_economy$CROPDMGFULL <- ifelse(storm_data_for_economy$CROPDMGEXP == "K", storm_data_for_economy$CROPDMG * 1000, ifelse(storm_data_for_economy$CROPDMGEXP == "M",  storm_data_for_economy$CROPDMG * 1000000, ifelse(storm_data_for_economy$CROPDMGEXP == "B",  storm_data_for_economy$CROPDMG * 1000000000, 0)))
+```
+
+To approximate to *total* effect of the consequence of an observation on the economy, `PROPDMGFULL` and `CROPDMGFULL` are summed together in a `DAMAGE` variable.
+
+```{r}
+storm_data_for_economy$DAMAGE <- storm_data_for_economy$PROPDMGFULL + storm_data_for_economy$CROPDMGFULL
+```
+
+`DAMAGE` is then summed together per `EVTYPE` and stored in `storm_data_for_economy_grouped_per_event_type`
+```{r}
+storm_data_for_economy_grouped_per_event_type <- ddply(storm_data_for_economy, .(EVTYPE), numcolwise(sum))
+head(storm_data_for_economy_grouped_per_event_type)
+```
+
+# Results
+## Population health
+A ranking can be created from `storm_data_for_harmfulness_grouped_per_event_type` by ordering the data set by `HARMFULNESS` in a descending order (i.e. events causing more fatalities and injuries will be at the top).
+
+```{r}
+top_10_events_for_harmfulness <- storm_data_for_harmfulness_grouped_per_event_type[order(storm_data_for_harmfulness_grouped_per_event_type$HARMFULNESS, decreasing = TRUE), ][1:10, ]
+print(top_10_events_for_harmfulness[, c("EVTYPE", "HARMFULNESS")])
+```
+
+For a more visual effect, a smaller ranking can be created in a similar fashion and plotted. The surfaces represent the number of fatalities and injuries caused by the particular weather events in the U.S between 1994 and 2011.
+
+```{r, fig.align='center'}
+top_5_events_for_harmfulness <- storm_data_for_harmfulness_grouped_per_event_type[order(storm_data_for_harmfulness_grouped_per_event_type$HARMFULNESS, decreasing = TRUE), ][1:5, ]
+
+ggplot(top_5_events_for_harmfulness) + aes(x = factor(1), y = HARMFULNESS, fill = factor(EVTYPE), order = HARMFULNESS) + geom_bar(stat = "identity") + coord_polar(theta = "y") + labs(title = 'Five most dangerous weather types in the U.S.', x = "", y = "", fill = "Event types")
+
+```
+
+## Economy
+A ranking can be created from `storm_data_for_economy_grouped_per_event_type` by ordering the data set by `DAMAGE` in a descending order (i.e. events causing more damage to properties and crops will be at the top).
+
+```{r}
+top_10_events_for_damage <- storm_data_for_economy_grouped_per_event_type[order(storm_data_for_economy_grouped_per_event_type$DAMAGE, decreasing = TRUE), ][1:10, ]
+print(top_10_events_for_damage[, c("EVTYPE", "DAMAGE")])
+```
+
+For a more visual effect, a smaller ranking can be created in a similar fashion and plotted. The surfaces represent the monetary value of damage caused to property and crops by weather in the U.S (in U.S. dollars) between 1994 to 2011.
+
+```{r, fig.align='center'}
+top_5_events_for_damage <- storm_data_for_economy_grouped_per_event_type[order(storm_data_for_economy_grouped_per_event_type$DAMAGE, decreasing = TRUE), ][1:5, ]
+
+ggplot(top_5_events_for_damage) + aes(x = factor(1), y = DAMAGE, fill = factor(EVTYPE)) + geom_bar(stat = "identity") + coord_polar(theta = "y") + labs(title = 'Five most damaging weather types in the U.S', x = "", y = "", fill = "Event types")
+```
