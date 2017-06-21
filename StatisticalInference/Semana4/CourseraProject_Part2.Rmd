@@ -1,0 +1,102 @@
+---
+title: 'Part 2: Basic Inferential Data Analysis'
+author: "Sergio Paz"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+##Overview
+
+Analyze the ToothGrowth data in the R datasets package.
+
+
+##Load the ToothGrowth data and perform some basic exploratory data analyses
+
+```{r}
+library(datasets)
+data("ToothGrowth")
+head(ToothGrowth)
+dim(ToothGrowth)
+str(ToothGrowth)
+```
+
+
+##Provide a basic summary of the data
+
+```{r}
+summary(ToothGrowth)
+table(ToothGrowth$supp, ToothGrowth$dose)
+```
+
+
+##Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose
+
+```{r}
+library(ggplot2)
+library(plyr)
+agg <- aggregate(len ~ dose + supp, ToothGrowth, mean)
+ggplot(agg, aes(x=dose, y=len, colour = supp)) +
+    geom_line(size=2, alpha=.5) + geom_point(size=5, alpha=.3) +
+    xlab("Dose in miligrams") + ylab("Average Tooth length") +
+    guides(colour=guide_legend(title="Supplement type")) +
+    scale_color_manual(values = c("green", "#E69F01"))
+```
+
+There seems to be a correlation between the dose and tooth growth, where 
+Orange Juice is more effective for lower doses, where the 2 milligram 
+seems to be the maximum effect point.
+
+```{r}
+ddply(ToothGrowth, dose ~ supp,function(x) 
+      c(mean=mean(x$len), sd=sd(x$len),
+        conf.int=t.test(x$len)$conf.int))
+```
+
+We observe that in 95% confidence interval the `Ascorbic Acid(VC)` intervals are pairwise disjoint so we can claim with high level of confidence that the length means are distinct, moreover there is a clear growth correlation between dose & length means.
+
+By now we can also immediately identify with high level of confidence 
+that For 0.5 and 1 milligrams Orange Juice have has greater impact on 
+tooth growth (On the merit that for those 2 doses there confidence
+interval are pairwise disjoint).
+
+For Orange Juice(OJ) supplement type, however, there is an overlap for dose 1 and 2 milligrams, 
+and we are forced to look deeper.
+
+```{r}
+t.test(len ~ dose, paired=FALSE, var.equal=TRUE,
+       data=subset(ToothGrowth, dose %in% c(1.0,2.0) & supp == 'OJ'))
+```
+
+```{r, echo=FALSE}
+hp <- t.test(len ~ dose, paired=FALSE, var.equal=TRUE,
+       data=subset(ToothGrowth, dose %in% c(1.0,2.0) & supp == 'OJ'))
+t <- hp$statistic
+p <- hp$parameter
+q <- qt(.025, p)
+```
+
+The t value ```r t``` being less than **qt(.025, ```r p```)** == ```r q```
+allows us to assert that the mean length for 2 milligrams as greater than the for the 1 milligram dose.
+
+In the 2.0 milligram dose there is an overlap between `Orange Juice (OJ)` and `Ascorbic Acid (VC)` let's dig deeper 
+
+```{r}
+t.test(len ~ supp, paired=FALSE, var.equal=FALSE,
+       data=subset(ToothGrowth, dose == 2.0))
+```
+
+The confidence Interval includes 0 and hence difference between the supplements types vis-a-vis mean lengths is insignificant.
+
+
+##State your conclusions and the assumptions needed for your conclusions
+
+The analysis has shown with high confidence that the there is a 
+correlation between the supplement type used and teeth growth in guinea pigs, 
+when for small doses of 0.5 and 1 milligrams, Orange Juice, clearly has
+an advantage.
