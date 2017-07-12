@@ -32,7 +32,6 @@ p1
 
 # Boxplot con puntos
 library(gridExtra)
-library(grid)
 p2 <- qplot(cutWage, age, data = training, fill=cutWage, 
             geom = c("boxplot", "jitter"))
 grid.arrange(p1, p2, ncol=2)
