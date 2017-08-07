@@ -11,13 +11,13 @@ dim(training); dim(testing)
 # Graficar
 featurePlot(x=training[,c("age", "education", "jobclass")], y=training$wage, plot = "pairs")
 
-# Gráfica edad vs salario
+# Gr�fica edad vs salario
 qplot(age, wage, data = training)
 
-# Gráfica identificando el tipo de trabajo
+# Gr�fica identificando el tipo de trabajo
 qplot(age, wage, colour=jobclass, data = training)
 
-# Gráfica identificando la educación
+# Gr�fica identificando la educación
 qplot(age, wage, colour=education, data = training)
 
 # Ajustar el modelo lineal
@@ -25,16 +25,16 @@ modFit <- train(wage ~ age + jobclass + education, method="lm", data = training)
 finMod <- modFit$finalModel
 print(modFit)
 
-# Gráfica de diagnóstico
+# Gr�fica de diagnóstico
 plot(finMod, 1, pch=19, cex=0.5, col="#00000010")
 
 # Variables no utilizadas en el modelo
 qplot(finMod$fitted, finMod$residuals, colour=race, data = training)
 
-# Gráfica por índice
+# Gr�fica por �ndice
 plot(finMod$residuals, pch=19)
 
-# Predicción vs verdad
+# Predicci�n vs verdad
 pred <- predict(modFit, testing)
 qplot(wage, pred, colour=year, data = testing)
 

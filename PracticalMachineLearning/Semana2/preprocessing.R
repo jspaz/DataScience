@@ -1,5 +1,5 @@
 # Preprocesamiento
-library(caret); library(kernlab); data(spam)
+library(caret); library(kernlab); data("spam")
 inTrain <- createDataPartition(y=spam$type, p = 0.75, list = FALSE)
 training <- spam[inTrain,]
 testing <- spam[-inTrain,]
@@ -20,7 +20,7 @@ testCapAveS <- (testCapAve - mean(trainCapAve))/sd(trainCapAve)
 mean(testCapAveS)
 sd(testCapAveS)
 
-# FunciÃ³n de preprocesamiento
+# Función de preprocesamiento
 preObj <- preProcess(training[,-58], method = c("center", "scale"))
 trainCapAveS <- predict(preObj, training[,-58])$capitalAve
 mean(trainCapAveS)
@@ -35,7 +35,7 @@ set.seed(32343)
 modelFit <- train(type ~., data = training, preProcess = c("center", "scale"), method = "glm")
 modelFit
 
-# TranformaciÃ³n Box-Cox
+# Tranformación Box-Cox
 preObj <- preProcess(training[,-58], method = c("BoxCox"))
 trainCapAveS <- predict(preObj, training[,-58])$capitalAve
 par(mfrow=c(1,2)); hist(trainCapAveS); qqnorm(trainCapAveS)
@@ -43,16 +43,17 @@ par(mfrow=c(1,2)); hist(trainCapAveS); qqnorm(trainCapAveS)
 # Imputing data
 set.seed(13343)
 
+#se generan algunos valores NA
 training$capAve <- training$capitalAve
 selectNA <- rbinom(dim(training)[1], size = 1, prob = 0.05) == 1
 training$capAve[selectNA] <- NA
-
+#Estandarizacion
 preObj <- preProcess(training[,-58], method = "knnImpute")
 capAve <- predict(preObj, training[,-58])$capAve
-
+#Estandarización de valores verdaderos
 capAveTruth <- training$capitalAve
 capAveTruth <- (capAveTruth - mean(capAveTruth))/sd(capAveTruth)
-
+#Cuantiles
 quantile(capAve - capAveTruth)
 quantile((capAve - capAveTruth)[selectNA])
 quantile((capAve - capAveTruth)[!selectNA])

@@ -1,5 +1,5 @@
 # Ejemplo división de datos
-library(caret); library(kernlab); data(spam)
+library(caret); library(kernlab); data("spam")
 #Se dividen los datos 75% para entrenamiento y 25% para pruebas
 inTrain <- createDataPartition(y=spam$type, p=0.75, list = FALSE)
 #Se generan los subconjuntos de datos para entrenamiento y pruebas
@@ -15,7 +15,7 @@ modelFit <- train(type ~., data = training, method = "glm")
 modelFit
 
 # Modelo final
-modelFit <- train(type ~., data = training, method = "gml")
+modelFit <- train(type ~., data = training, method = "glm")
 modelFit$finalModel
 
 # Predicción

@@ -1,4 +1,4 @@
-# Covariables es conocido tambiÃ©n como predictores
+# Covariables es conocido también como predictores
 library(kernlab); data("spam")
 spam$capitalAveSq <- spam$capitalAve^2
 

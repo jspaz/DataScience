@@ -11,7 +11,7 @@ which(M > 0.8, arr.ind = T)
 names(spam)[c(34, 32)]
 plot(spam[,34],spam[,32])
 
-#Rotar la gr√°fica
+#Rotar la gr·fica
 X <- 0.71*training$num415 + 0.71*training$num857
 Y <- 0.71*training$num415 - 0.71*training$num857
 plot(X, Y)
@@ -35,11 +35,11 @@ plot(spamPC[,1], spamPC[,2], col=typeColor)
 #Preproceso con PCA
 preProc <- preProcess(log10(training[,-58]+1), method = "pca", pcaComp = 2)
 trainPC <- predict(preProc, log10(training[,-58]+1))
-modelFit <- train(training$type ~ .,method="glm", data = trainPC)
+modelFit <- train(training$type ~., method = "glm", data = trainPC) #muestra error
 testPC <- predict(preProc, log10(testing[,-58]+1))
 confusionMatrix(testing$type, predict(modelFit, testPC))
 
 #Alternativa
-modelFit <- train(training$type ~., method='glm', preProcess='pca', data = training)
+modelFit <- train(training$type ~., method='glm', preProcess='pca', data = training) #muestra error
 confusionMatrix(testing$type, predict(modelFit,testing))
 
