@@ -1,4 +1,6 @@
 # carga librerias
+library(NLP)
+library(RColorBrewer)
 library(tm)
 library(wordcloud)
 
