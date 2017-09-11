@@ -1,0 +1,18 @@
+---
+title: "Regularize Regression"
+output: html_notebook
+---
+
+
+```{r}
+library(ElemStatLearn); data("prostate")
+str(prostate)
+```
+
+
+```{r}
+small = prostate[1:5,]
+lm(lpsa ~ ., data = small)
+```
+
+
