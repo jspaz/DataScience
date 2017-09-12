@@ -1,0 +1,12 @@
+---
+title: "Forecasting"
+output: html_notebook
+---
+
+Google data
+
+```{r}
+library(quantmod)
+```
+
+
