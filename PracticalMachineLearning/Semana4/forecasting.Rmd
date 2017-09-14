@@ -4,9 +4,29 @@ output: html_notebook
 ---
 
 Google data
+Nota: en ambiente Linux puede ser necesario hacer una instalación adicional
+yum install libcurl-devel
 
 ```{r}
 library(quantmod)
+from.dat <- as.Date("01/01/08", format="%m/%d/%y")
+to.dat <- as.Date("12/31/16", format="%m/%d/%y")
+getSymbols("GOOG", src = "google", from = from.dat, to = to.dat)
 ```
 
+```{r}
+head(GOOG)
+```
 
+Summarize monthly and store as time series
+```{r}
+mGoog <- to.monthly(GOOG)
+googOpen <- Op(mGoog)
+ts1 <- ts(googOpen, frequency = 12)
+plot(ts1, xlab = "Years+1", ylab = "GOOG")
+```
+
+Descompose a time series into parts
+```{r}
+plot(descompose(ts1), xlab = "Years+1")
+```
