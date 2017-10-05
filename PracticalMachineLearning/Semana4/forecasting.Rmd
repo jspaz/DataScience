@@ -3,11 +3,13 @@ title: "Forecasting"
 output: html_notebook
 ---
 
-Google data
+###Google data
 Nota: en ambiente Linux puede ser necesario hacer una instalación adicional
-yum install libcurl-devel
+```{bash}
+sudo yum install libcurl-devel
+```
 
-```{r}
+```{r, include=FALSE}
 library(quantmod)
 from.dat <- as.Date("01/01/08", format="%m/%d/%y")
 to.dat <- as.Date("12/31/16", format="%m/%d/%y")
@@ -18,7 +20,7 @@ getSymbols("GOOG", src = "google", from = from.dat, to = to.dat)
 head(GOOG)
 ```
 
-Summarize monthly and store as time series
+###Summarize monthly and store as time series
 ```{r}
 mGoog <- to.monthly(GOOG)
 googOpen <- Op(mGoog)
@@ -26,7 +28,34 @@ ts1 <- ts(googOpen, frequency = 12)
 plot(ts1, xlab = "Years+1", ylab = "GOOG")
 ```
 
-Descompose a time series into parts
+###Decompose a time series into parts
 ```{r}
-plot(descompose(ts1), xlab = "Years+1")
+plot(decompose(ts1), xlab = "Years+1")
 ```
+
+###Training and test set
+```{r}
+ts1Train <- window(ts1, start=1, end=3)
+ts1Test <- window(ts1, start=3, end=(7-0.01))
+ts1Train
+```
+
+###Simple movig average
+```{r}
+library(forecast)
+plot(ts1Train)
+lines(ma(ts1Train, order=3), col="red")
+```
+
+###Exponential smoothing
+```{r}
+ets1 <- ets(ts1Train, model = "MMM")
+fcast <- forecast(ets1)
+plot(fcast); lines(ts1Test, col="red")
+```
+
+###Get the accuracy
+```{r}
+accuracy(fcast, ts1Test)
+```
+
