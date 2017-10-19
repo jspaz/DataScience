@@ -1,0 +1,72 @@
+---
+title: "In and out of sample errors"
+output: html_notebook
+---
+
+#In sample versus out of sample errors
+
+```{r}
+library(kernlab); data("spam"); set.seed(333)
+smallSpam <- spam[sample(dim(spam)[1], size = 10),]
+spamLabel <- (smallSpam$type=="spam")*1+1
+plot(smallSpam$capitalAve, col=spamLabel)
+```
+
+Reglas
+capitalAve > 2.7 = "spam"
+capitalAve < 2.4 = "nonspam"
+capitalAve between 2.4 and 2.45 = "spam"
+capitalAve between 2.45 and 2.7 = "nonspam"
+
+#Apply rule 1 to smallSpam
+
+```{r}
+rule1 <- function(x){
+  prediction <- rep(NA, length(x))
+  prediction[x > 2.7] <- "spam"
+  prediction[x < 2.4] <- "nonspam"
+  prediction[(x >= 2.4 & x <= 2.45)] <- "spam"
+  prediction[(x > 2.45 & x <= 2.7)] <- "nonspam"
+  return(prediction)
+}
+table(rule1(smallSpam$capitalAve), smallSpam$type)
+```
+
+Prediction rule 2
+capitalAve < 2.4 = "spam"
+capitalAve >= 2.4 = "nonspam"
+
+#Apply rule 2 to smallSpam
+
+```{r}
+rule2 <- function(x){
+  prediction <- rep(NA, length(x))
+  prediction[x > 2.8] <- "spam"
+  prediction[x <= 2.8] <- "nonspam"
+  return(prediction)
+}
+table(rule2(smallSpam$capitalAve), smallSpam$type)
+```
+
+#Apply to complete spam data
+```{r}
+table(rule1(spam$capitalAve), spam$type)
+```
+
+```{r}
+table(rule2(spam$capitalAve), spam$type)
+```
+
+```{r}
+mean(rule1(spam$capitalAve)==spam$type)
+```
+
+#look at accuraccy
+```{r}
+sum(rule1(spam$capitalAve)==spam$type)
+```
+
+```{r}
+sum(rule2(spam$capitalAve)==spam$type)
+```
+
