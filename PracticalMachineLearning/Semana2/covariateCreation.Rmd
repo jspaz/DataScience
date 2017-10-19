@@ -1,0 +1,49 @@
+---
+title: "Covariate Creation"
+output:
+  html_notebook: default
+  pdf_document: default
+---
+
+
+
+```{r}
+library(kernlab); data("spam")
+spam$capitalAveSq <- spam$capitalAve^2
+```
+
+```{r}
+library(ISLR); library(caret); data("Wage");
+inTrain <- createDataPartition(y=Wage$wage, p=0.7, list = FALSE)
+training <- Wage[inTrain,]; testing <- Wage[-inTrain,]
+```
+
+#Variables Dummie
+```{r}
+table(training$jobclass)
+dummies <- dummyVars(wage ~ jobclass, data = training)
+head(predict(dummies, newdata=training))
+```
+
+```{r}
+nsv <- nearZeroVar(training, saveMetrics = TRUE)
+nsv
+```
+
+#Split basis
+```{r}
+library(splines)
+bsBasis <- bs(training$age, df=3)
+bsBasis
+```
+
+```{r}
+lm1 <- lm(wage ~ bsBasis, data = training)
+plot(training$age, training$wage, pch=19, cex=0.5)
+points(training$age, predict(lm1, newdata=training), col="red", pch=19, cex=0.5)
+```
+
+```{r}
+predict(bsBasis, age = testing$age)
+```
+

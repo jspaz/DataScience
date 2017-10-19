@@ -1,0 +1,40 @@
+---
+title: "Carret"
+output:
+  html_notebook: default
+  pdf_document: default
+---
+
+#Ejemplo división de datos 
+
+```{r}
+library(caret); library(kernlab); data("spam")
+inTrain <- createDataPartition(y=spam$type, p=0.75, list = FALSE)
+training <- spam[inTrain,]
+testing <- spam[-inTrain,]
+dim(training)
+```
+
+#Ajustar modelo
+```{r, warning=FALSE}
+set.seed(32343)
+modelFit <- train(type ~., data = training, method = "glm")
+modelFit
+```
+
+#Modelo final
+```{r, warning=FALSE}
+modelFit <- train(type ~., data = training, method = "glm")
+modelFit$finalModel
+```
+
+#Predicción
+```{r}
+predictions <- predict(modelFit, newdata = testing)
+predictions
+```
+
+#Matriz de confusión
+```{r}
+confusionMatrix(predictions, testing$type)
+```
