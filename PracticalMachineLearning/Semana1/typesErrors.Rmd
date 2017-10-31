@@ -1,0 +1,20 @@
+---
+title: "Types od errors"
+output: html_notebook
+---
+
+Conceptos básicos
+
+Positivo = identificado
+Negativo = rechazado
+
+Verdadero positivo = correctamente identificado
+Falso posiotivo = incorrectamente identificado
+Verdadero negativo = correctamente rechazado
+Falso negativo = incorrectamente rechazado
+
+```{r}
+plot(cars)
+```
+
+
