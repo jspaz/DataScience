@@ -3,7 +3,25 @@ title: "WhatIsPrediction"
 output: html_notebook
 ---
 
-#Ejemplo SPAM 
+###Predicción 
+
+Es necesario realizar una función predictiva que evalue las características de los elementos para identificar a qué grupo pertenece.
+
+Los componentes de una predicción son:
+
+1. Pregunta
+2. Datos de entrada
+3. Identificación de características medibles
+4. Crear o seleccionar el algoritmo
+5. Parámetros del algoritmo
+6. Evaluación el algoritmo con nuevos datos
+
+###Ejemplo SPAM
+
+1. Pregunta
+**¿Puedo utilizar características cuantitativas de los correos electrónicos para clasificarlos como SPAM/HAM?**
+2. Datos de entrada. Se cargan los datos de la librería _kenrlab_
+3. Características. Se calcula la frecuencia con la cual las palabras aparecen (por ejemplo, la frecuencia de la palabra en todas las palabras de un correo electrónico  _your_ = 2/17 = 0.118 = 11%)
 
 ```{r}
 library(kernlab)
@@ -11,11 +29,15 @@ data("spam")
 head(spam)
 ```
 
+En este diagrama se muestra la frecuencia con la que se muestra la palabra _your_ en los correos electrónicos. El diagrama de densidad, en el eje **X** se muestra la frecuencia de la palabra y en la **Y** el número de veces que esa frecuencia aparece entre los correos.
+
 ```{r}
 plot(density(spam$your[spam$type=="nonspam"]),
      col="blue", main="", xlab="Frecuency of 'your")
 lines(density(spam$your[spam$type=="spam"]), col="red")
 ```
+
+Se introduce una marca para identificar el límite que se usará para identificar cuándo es SPAM (si está por encima de  0.5) y cuando es HAM (si se encuentra por debajo de 0.5)
 
 ```{r}
 plot(density(spam$your[spam$type=="nonspam"]),
@@ -23,6 +45,9 @@ plot(density(spam$your[spam$type=="nonspam"]),
 lines(density(spam$your[spam$type=="spam"]), col="red")
 abline(v=0.5, col="black")
 ```
+4. Algoritmo. Frecuencia de una palabra > al valor de para predecir si es SPAM
+5. Parámetros. Se determina a 0.5 como valor de predicción del algoritmo
+6. Evaluación. El agoritmo tiene una exactitud para este caso en específico de 0.0.4590306 + 0.2923278 = 0.7513584 = 75%
 
 ```{r}
 prediction <- ifelse(spam$your > 0.5, "spam", "nonspam")

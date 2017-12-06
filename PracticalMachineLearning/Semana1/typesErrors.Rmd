@@ -3,15 +3,31 @@ title: "Types od errors"
 output: html_notebook
 ---
 
-Conceptos básicos
+###Conceptos básicos
 
-Positivo = identificado
-Negativo = rechazado
+- Positivo = identificado
+- Negativo = rechazado
 
-Verdadero positivo = correctamente identificado
-Falso posiotivo = incorrectamente identificado
-Verdadero negativo = correctamente rechazado
-Falso negativo = incorrectamente rechazado
+- Verdadero positivo = correctamente identificado en la clase que nos interesa
+- Falso positivo = incorrectamente identificado en la clase que nos interesa
+- Verdadero negativo = correctamente rechazado
+- Falso negativo = incorrectamente rechazado
+- Exactitud, es la probabilidad de clasificar los resultados (true positive + true negative)
+
+
+Ejemplo en medicina:
+
+- Verdadero positivo = persona enferma correctamente diagnosticada como enferma
+- Falso positivo = Persona sana incorrectamente diagnosticada como enferma
+- Verdadero negativo = Persona sana correctamente identificada como sana
+- Falso negativo = Persona enferma incorrectamente identificada como sana
+
+###Cantidades como fracciones
+- Sensibilidad              -> TP/(TP+FN)
+- Especificidad             -> TN/(FP+TN)
+- Positivo valor predictivo -> TP/(TP+FP)
+- Negativo valor predictivo -> TP/(FN+TN)
+- Exactitud                 -> (TP+TN)/(TP+FP+FN+TN)
 
 ```{r}
 plot(cars)

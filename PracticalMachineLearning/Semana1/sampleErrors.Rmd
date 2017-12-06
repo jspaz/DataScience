@@ -3,7 +3,18 @@ title: "In and out of sample errors"
 output: html_notebook
 ---
 
-#In sample versus out of sample errors
+
+**In Sample Error.** El error que se obtiene en el mismo set de datos se utiliza para construir la predicción. Algunas veces se denomina como error de resubstitución.
+
+**Out of Sample Error.** El error se obtiene de un nuevo conjunto de datos. Algunas veces es llamado error de generalización.
+
+* Out of Sample Error, es sobre lo que se interesa
+* In sample error < out of sample error
+* La razón es que está sobre ajustado para que el algoritmo funcione con los datos que se tienen
+
+##In sample versus out of sample errors
+
+Se utilizan los datos de correos SPAM, se toman sólo diez mensajes para observar el número de letras en mayúsculas en un correo electrónico en particular. El color rojo se encuentran los mensajes SPAM y en negro los mensajes HAM
 
 ```{r}
 library(kernlab); data("spam"); set.seed(333)
@@ -12,13 +23,13 @@ spamLabel <- (smallSpam$type=="spam")*1+1
 plot(smallSpam$capitalAve, col=spamLabel)
 ```
 
-Reglas
-capitalAve > 2.7 = "spam"
-capitalAve < 2.4 = "nonspam"
-capitalAve between 2.4 and 2.45 = "spam"
-capitalAve between 2.45 and 2.7 = "nonspam"
+##Reglas de predicción 1
+1. capitalAve > 2.7 = "spam"
+2. capitalAve < 2.4 = "nonspam"
+3. capitalAve between 2.4 and 2.45 = "spam"
+4. capitalAve between 2.45 and 2.7 = "nonspam"
 
-#Apply rule 1 to smallSpam
+Se aplican las reglas 3 y 4 para que clasifique de manera perfecta con los datos que se tienen.
 
 ```{r}
 rule1 <- function(x){
@@ -32,11 +43,11 @@ rule1 <- function(x){
 table(rule1(smallSpam$capitalAve), smallSpam$type)
 ```
 
-Prediction rule 2
+##Reglas de predicción 2
 capitalAve < 2.4 = "spam"
 capitalAve >= 2.4 = "nonspam"
 
-#Apply rule 2 to smallSpam
+Cuando se implementan las reglas, existe un caso que no puede ser clasificado por las reglas.
 
 ```{r}
 rule2 <- function(x){
@@ -48,7 +59,9 @@ rule2 <- function(x){
 table(rule2(smallSpam$capitalAve), smallSpam$type)
 ```
 
-#Apply to complete spam data
+##Se aplican todos los datos
+Se aplican todos los datos a los dos modelos para observar los aciertos.
+
 ```{r}
 table(rule1(spam$capitalAve), spam$type)
 ```
@@ -61,7 +74,17 @@ table(rule2(spam$capitalAve), spam$type)
 mean(rule1(spam$capitalAve)==spam$type)
 ```
 
-#look at accuraccy
+##Exactitud de los modelos
+
+Se observa el número de veces que los dos modelos acertaron en sus predicciones y en este caso el modelo con menor reglas es el que tiene mayor cantidad de aciertos.Se debe principalmente porque se encuentra sobre ajustado.
+
+Los datos tienen dos partes:
+
+* Signal. Es la parte que se utiliza para la predicción
+* Noise. Es la variación aleatoria porque los datos son medidos de forma ruidosa
+
+La meta de una predicción es encontrar la señal. Cuando se ajusta demasiado un modelo con pocos datos se captura tanto la señal como el ruido. La predicción no necesariamiente se desempeñara igual de bien con nuevos ejemplos.
+
 ```{r}
 sum(rule1(spam$capitalAve)==spam$type)
 ```
