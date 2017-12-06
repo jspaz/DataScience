@@ -1,0 +1,104 @@
+---
+title: "Análisis de calificaciones"
+output: html_notebook
+---
+
+Para mostrar la estructura de alguna función en R
+```{r}
+str(read.table)
+```
+
+
+Leer un archivo cvs y convertirlo a un data frame, mostrando sólo los primeros registros
+```{r}
+calificaciones <- read.csv("1156_Calificaciones.csv")
+head(calificaciones, 18)
+```
+
+Obtener las dimensiones del data frame (renglones, columnas)
+```{r}
+dim(calificaciones)
+```
+
+Obtener los valores de la columna dos a la cuatro del primer renglón, con la opción para mostrar el resultado en formato matriz
+```{r}
+calificaciones[1,c(2:4), drop = FALSE]
+```
+
+Obtener todos los valores de la primera columna
+```{r}
+calificaciones[,1]
+```
+
+Obtener los valores NA de una columna y luego muestra los valores sin valores NA en un vector
+```{r}
+valoresNA <- is.na(calificaciones$NÃºmero.de.ID)
+table(valoresNA)
+calificaciones$NÃºmero.de.ID[!valoresNA]
+```
+
+Mostrar sólo los casos completos del data frame en donde ninguna de sus columnas tienen valores NA, en este caso el registro dos tiene un valor NA en la columna número de ID
+```{r}
+good <- complete.cases(calificaciones)
+good
+calificaciones[good, ][1:10, 1:3]
+```
+
+
+Obtener elementos con nombre parcial de una lista
+```{r}
+f <- list(aamdjgf = 1:5)
+f$a
+f[["a", exact = FALSE]]
+```
+
+Se obtienen las valificaciones de una actividad y se evalua lógicamente
+```{r}
+calificaciones$Tarea.Unidad.1...Actividad.integradora.Lo.que.aprendÃ....Subir.archivo
+calificaciones$Tarea.Unidad.1...Actividad.integradora.Lo.que.aprendÃ....Subir.archivo > 0
+```
+
+
+
+
+Para extraer un subconjunto de datos se utilizan estos operadores:
+
+* **[]** obtiene el objeto de la misma clase
+* **[[]]** obtiene elementos de una lista o data frame, sólo puede ser usado para extraer un sólo elemento y la clase de retorno no necesariamente será una lista o data frame
+* **$** sólo obtiene elementos de una lista o data frame por nombre
+
+**Ejemplo** subconjunto de un vector, utilizando índice numérico y lógico
+```{r}
+vectorCaracter <- c("a", "b", "c", "d", "e", "f", "g")
+vectorCaracter[1]
+vectorCaracter[3:5]
+vectorCaracter[vectorCaracter > "b"]
+subconjunto1 <- vectorCaracter > "d"
+subconjunto1
+vectorCaracter[subconjunto1]
+```
+
+**Ejemplo** subconjunto de una lista con dos elementos
+```{r}
+lista <- list(foo = 1:4, bar = 0.6)
+lista[1] # Se obtiene el primer elemento de la lista
+lista[[1]] # Se obtiene sólo la secuencia del primer elemento
+lista$bar # Se obtiene los elementos asociados al nombre
+lista[["bar"]] # Es un equivalente a utilizar el simbolo $
+lista["bar"] # Obtiene la lista
+```
+
+**Ejemplo** de una lista con múltiples elementos, se obtiene sólo el 1 y 3
+```{r}
+listaMultiple <- list(foo = 1:4, bar = 0.6, baz = "hello")
+listaMultiple[c(1,3)]
+```
+
+**Ejemplo** Una lista con un vector y una lista anidada, obtiene un elemento en específico
+```{r}
+listaAnidada <- list(a = list(10, 12, 14), b = c(3.14, 2.81))
+listaAnidada[[c(1, 3)]]
+listaAnidada[[1]][[3]]
+listaAnidada[[c(2, 1)]]
+listaAnidada[[2]][[1]]
+```
