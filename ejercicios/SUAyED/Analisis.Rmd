@@ -3,16 +3,19 @@ title: "Análisis de calificaciones"
 output: html_notebook
 ---
 
-Para mostrar la estructura de alguna función en R
+
+Leer un archivo cvs y convertirlo a un data frame, mostrando sólo los primero y últimos registros
 ```{r}
-str(read.table)
+calificaciones <- read.csv("1156_Calificaciones.csv")
+head(calificaciones, n = 3)
+tail(calificaciones, n = 3)
 ```
 
 
-Leer un archivo cvs y convertirlo a un data frame, mostrando sólo los primeros registros
+Para mostrar la estructura de alguna función o más información de un data frame
 ```{r}
-calificaciones <- read.csv("1156_Calificaciones.csv")
-head(calificaciones, 18)
+str(read.table)
+str(calificaciones)
 ```
 
 Obtener las dimensiones del data frame (renglones, columnas)
@@ -30,6 +33,16 @@ Obtener todos los valores de la primera columna
 calificaciones[,1]
 ```
 
+obtener los primeros dos valores de la columna nombre
+```{r}
+calificaciones[1:2, "Nombre"]
+```
+
+Obtener todos los registros que sean de un departamento y sean mayores de cero
+```{r}
+calificaciones[(calificaciones$Departamento == "Sem. 2017-2" & calificaciones$Total.del.curso > 0),]
+```
+
 Obtener los valores NA de una columna y luego muestra los valores sin valores NA en un vector
 ```{r}
 valoresNA <- is.na(calificaciones$NÃºmero.de.ID)
@@ -44,6 +57,43 @@ good
 calificaciones[good, ][1:10, 1:3]
 ```
 
+otra forma de obtener todos los valores que no sean NA en una columna
+```{r}
+calificaciones[which(calificaciones$NÃºmero.de.ID > 0),]
+```
+
+Ordenar los valores de una columna, de forma descendente
+```{r}
+sort(calificaciones$Total.del.curso, decreasing = TRUE)
+```
+
+Realizar un ordenamiento de una columna en donde al final se colocan los valores NA
+```{r}
+sort(calificaciones$NÃºmero.de.ID, na.last = TRUE)
+```
+
+Ordenar todo el data frame por una columna
+```{r}
+calificaciones[order(calificaciones$Total.del.curso, decreasing = TRUE),]
+```
+
+Ordenar utilizando la libreria plyr
+```{r}
+library(plyr)
+arrange(calificaciones, desc(Total.del.curso))
+```
+
+Agrear una columna al data frame
+```{r}
+calificaciones$columna1 <- c(1:18)
+calificaciones$columna1
+```
+
+Otra forma de agregar una columna al data frame
+```{r}
+otro <- cbind(calificaciones,rnorm(18))
+otro
+```
 
 Obtener elementos con nombre parcial de una lista
 ```{r}
@@ -58,7 +108,36 @@ calificaciones$Tarea.Unidad.1...Actividad.integradora.Lo.que.aprendÃ....Subir.a
 calificaciones$Tarea.Unidad.1...Actividad.integradora.Lo.que.aprendÃ....Subir.archivo > 0
 ```
 
+hacer una tabla para observar los valores de una variable, incluyendo los valores NA
+```{r}
+table(calificaciones$NÃºmero.de.ID, useNA = "ifany")
+```
 
+Obtener el número de valores NA de una variable
+```{r}
+sum(is.na(calificaciones$NÃºmero.de.ID))
+any(is.na(calificaciones$NÃºmero.de.ID))
+all(calificaciones$Total.del.curso > 0)
+```
+
+Obtener el número de valores NA que existen en cada variable
+Valida en todo el data frame si existe algún valor NA, de ser así regresa false
+```{r}
+colSums(is.na(calificaciones))
+all(colSums(is.na(calificaciones))==0)
+```
+
+
+Obtener las coincidencias exactas de unos valores dentro de una variable
+```{r}
+table(calificaciones$Nombre %in% c("RAUL", "CESAR"))
+```
+
+
+Se obtiene toda la información del data frame con el filtrado de valores específicos
+```{r}
+calificaciones[calificaciones$Nombre %in% c("RAUL", "CESAR"),]
+```
 
 
 Para extraer un subconjunto de datos se utilizan estos operadores:
