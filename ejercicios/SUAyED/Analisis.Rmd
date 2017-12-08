@@ -11,6 +11,10 @@ head(calificaciones, n = 3)
 tail(calificaciones, n = 3)
 ```
 
+Para obtener el tamaño de un objeto en Mb
+```{r}
+print(object.size(calificaciones), units = "Mb")
+```
 
 Para mostrar la estructura de alguna función o más información de un data frame
 ```{r}
