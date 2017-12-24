@@ -143,6 +143,33 @@ test &lt;- read.csv(&quot;pml-testing.csv&quot;)
 dim(train); dim(test)</code></pre>
 <pre><code>## [1] 19622   160</code></pre>
 <pre><code>## [1]  20 160</code></pre>
+<pre class="r"><code>library(knitr)
+library(caret)</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## Loading required package: ggplot2</code></pre>
+<pre class="r"><code>inTrain &lt;- createDataPartition(train$classe, p=0.7, list = FALSE)
+TrainSet &lt;- train[inTrain, ]
+TestSet &lt;- train[-inTrain, ]
+dim(TrainSet); dim(TestSet)</code></pre>
+<pre><code>## [1] 13737   160</code></pre>
+<pre><code>## [1] 5885  160</code></pre>
+<pre class="r"><code>NZV &lt;- nearZeroVar(TrainSet)
+TrainSet &lt;- TrainSet[, -NZV]
+TestSet &lt;- TestSet[, -NZV]
+dim(TestSet); dim(TrainSet)</code></pre>
+<pre><code>## [1] 5885  102</code></pre>
+<pre><code>## [1] 13737   102</code></pre>
+<pre class="r"><code>AllNA &lt;- sapply(TrainSet, function(x) mean(is.na(x))) &gt; 0.95
+TrainSet &lt;- TrainSet[, AllNA==FALSE]
+TestSet &lt;- TestSet[, AllNA==FALSE]
+dim(TestSet); dim(TrainSet)</code></pre>
+<pre><code>## [1] 5885   59</code></pre>
+<pre><code>## [1] 13737    59</code></pre>
+<pre class="r"><code>TrainSet &lt;- TrainSet[, -(1:5)]
+TestSet &lt;- TestSet[, -(1:5)]
+dim(TestSet); dim(TrainSet)</code></pre>
+<pre><code>## [1] 5885   54</code></pre>
+<pre><code>## [1] 13737    54</code></pre>
 </div>
 
 
