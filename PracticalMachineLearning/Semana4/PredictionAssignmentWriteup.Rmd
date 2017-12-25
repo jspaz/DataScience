@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here:
 <http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har> (see the section on the Weight Lifting Exercise Dataset).
 
+
 ## Data
 
 Data source for the project:  <http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har>
@@ -30,20 +31,22 @@ The test data are available here:
 
 ## Reading data
 
-Check if you can read the files and see the dimension
-
+First, download data file in your R work directory.
+Check if you can read the files and see the dimension.
 ```{r}
 train <- read.csv("pml-training.csv")
 test <- read.csv("pml-testing.csv")
 dim(train); dim(test)
 ```
 
+Load the libraries that you need.
 ```{r}
 library(knitr)
 library(caret)
+library(corrplot)
 ```
 
-
+Split dataset: 70% training and 30% testing.
 ```{r}
 inTrain <- createDataPartition(train$classe, p=0.7, list = FALSE)
 TrainSet <- train[inTrain, ]
@@ -51,17 +54,26 @@ TestSet <- train[-inTrain, ]
 dim(TrainSet); dim(TestSet)
 ```
 
+
+## Cleaning data
+
+Cleaning data from dataset: 
+1. Eliminate NA values
+2. Remove variables using Near Zero Variance
+3. Remove ID in variables
+
+After all steps, you can see the number of variables for the analysis.
 ```{r}
-NZV <- nearZeroVar(TrainSet)
-TrainSet <- TrainSet[, -NZV]
-TestSet <- TestSet[, -NZV]
+dataNZV <- nearZeroVar(TrainSet)
+TrainSet <- TrainSet[, -dataNZV]
+TestSet <- TestSet[, -dataNZV]
 dim(TestSet); dim(TrainSet)
 ```
 
 ```{r}
-AllNA <- sapply(TrainSet, function(x) mean(is.na(x))) > 0.95
-TrainSet <- TrainSet[, AllNA==FALSE]
-TestSet <- TestSet[, AllNA==FALSE]
+dataNA <- sapply(TrainSet, function(x) mean(is.na(x))) > 0.95
+TrainSet <- TrainSet[, dataNA==FALSE]
+TestSet <- TestSet[, dataNA==FALSE]
 dim(TestSet); dim(TrainSet)
 ```
 
@@ -69,5 +81,75 @@ dim(TestSet); dim(TrainSet)
 TrainSet <- TrainSet[, -(1:5)]
 TestSet <- TestSet[, -(1:5)]
 dim(TestSet); dim(TrainSet)
+```
+
+Printing correlation between variables. Strong correlation is visible in dark colors.
+```{r}
+correlationMatrix <- cor(TrainSet[, -54])
+corrplot(correlationMatrix, order = "FPC", method = "color", type = "lower", tl.cex = 0.8, tl.col = rgb(0, 0, 0))
+```
+
+
+## Prediction model
+
+Create predicction model using random forest.
+
+Load libraries.
+```{r}
+library(parallel)
+library(doParallel)
+```
+
+```{r}
+cl <- makeCluster(detectCores() -1)
+registerDoParallel(cl)
+```
+
+Control parameters
+```{r}
+ctrl <- trainControl(classProbs = TRUE, savePredictions = TRUE, allowParallel = TRUE)
+```
+
+Fit model
+```{r}
+method <- "rf"
+system.time(TrainingModel <- train(classe ~ ., data = TrainSet, method=method))
+```
+
+Stop the clusters.
+```{r}
+stopCluster(cl)
+```
+
+
+## Evaluate the model 
+
+To see the model with training data set.
+```{r}
+TrainingModel
+```
+
+Confusion matrix method shows accuracy, sensitivity & specificity metrics.
+```{r}
+hat <- predict(TrainingModel, TrainSet)
+confusionMatrix(hat, TrainSet[, "classe"])
+```
+
+## Evaluate the model
+
+```{r}
+hat <- predict(TrainingModel, TestSet)
+confusionMatrix(hat, TestSet[, "classe"])
+```
+
+## Final model
+
+The estimate error is less than 1%
+```{r}
+varImp(TrainingModel)
+```
+
+```{r}
+TrainingModel$finalModel
 ```
 
